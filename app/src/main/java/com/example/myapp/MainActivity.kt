@@ -4,8 +4,11 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.runtime.remember
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
 
 class MainActivity : ComponentActivity() {
@@ -20,20 +23,35 @@ class MainActivity : ComponentActivity() {
             ) {
                 composable("home") {
                     HomeScreen(
-                        onMembersClicked = { nav.navigate("members") }
+                        onMembersClicked = { nav.navigate("members_flow") }
                     )
                 }
-                composable("members") {
-                    MembersScreen(
-                        onAddMembers = { nav.navigate("addMember") },
-                        onBackPressed = { nav.popBackStack() }
-                    )
+                //Nav graph for "members" feature
+                navigation(startDestination = "members", route = "members_flow"){
+                    composable("members") { backStackEntry ->
+                        val parentEntry = remember(backStackEntry) {
+                            nav.getBackStackEntry("members_flow")
+                        }
+                        val vm: MemberViewModel = viewModel(parentEntry)
+                        MembersScreen(
+                            onAddMembers = { nav.navigate("addMember") },
+                            onBackPressed = { nav.popBackStack() },
+                            vm = vm
+                        )
+                    }
+
+                    composable("addMember") { backStackEntry ->
+                        val parentEntry = remember(backStackEntry){
+                            nav.getBackStackEntry("members_flow")
+                        }
+                        val vm: MemberViewModel = viewModel(parentEntry)
+                        AddMemberScreen(
+                            onBackPressed = { nav.popBackStack() },
+                            vm = vm
+                        )
+                    }
                 }
-                composable("addMember") {
-                    AddMemberScreen(
-                        onBackPressed = { nav.popBackStack() }
-                    )
-                }
+
             }
         }
     }
