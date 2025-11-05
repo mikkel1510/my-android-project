@@ -1,4 +1,4 @@
-package com.example.gimmedamoney
+package com.example.myapp
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity

@@ -1,4 +1,4 @@
-package com.example.gimmedamoney
+package com.example.myapp
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column

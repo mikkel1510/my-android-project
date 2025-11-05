@@ -1,4 +1,4 @@
-package com.example.gimmedamoney
+package com.example.myapp
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
@@ -41,7 +41,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.gimmedamoney.ui.theme.GimmeDaMoneyTheme
+import com.example.myapp.ui.theme.MyAppTheme
 
 @Composable
 fun PersonList(members: List<MemberViewModel.Member>) {
@@ -206,7 +206,7 @@ fun MemberScreenPreview() {
     vm.addPerson("Pete")
     vm.addPerson("Steve")
 
-    GimmeDaMoneyTheme {
+    MyAppTheme {
         MembersScreen(onAddMembers = {}, onBackPressed = {})
     }
 

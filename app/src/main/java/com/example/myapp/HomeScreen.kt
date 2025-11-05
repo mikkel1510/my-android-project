@@ -1,7 +1,5 @@
-package com.example.gimmedamoney
+package com.example.myapp
 
-import android.R
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -9,8 +7,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.LargeTopAppBar
-import androidx.compose.material3.MediumTopAppBar
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
@@ -25,7 +21,7 @@ import androidx.compose.ui.tooling.preview.Preview
 fun HomeScreen(onMembersClicked: () -> Unit){
     Scaffold { innerPadding ->
         CenterAlignedTopAppBar(
-            title = {Text("GimmeDaMoney")},
+            title = {Text("MyApp")},
             colors = TopAppBarDefaults.topAppBarColors(
                 containerColor = Color.Blue,
                 titleContentColor = Color.White
