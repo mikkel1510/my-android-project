@@ -14,13 +14,26 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             val nav = rememberNavController()
-
             NavHost(
                 navController = nav,
                 startDestination = "home",
             ) {
-                composable("home") { MembersScreen(onAddMembers = {nav.navigate("addMember")}) }
-                composable("addMember") { AddMemberScreen(onBackPressed = {nav.popBackStack()}) }
+                composable("home") {
+                    HomeScreen(
+                        onMembersClicked = { nav.navigate("members") }
+                    )
+                }
+                composable("members") {
+                    MembersScreen(
+                        onAddMembers = { nav.navigate("addMember") },
+                        onBackPressed = { nav.popBackStack() }
+                    )
+                }
+                composable("addMember") {
+                    AddMemberScreen(
+                        onBackPressed = { nav.popBackStack() }
+                    )
+                }
             }
         }
     }

@@ -26,6 +26,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -156,13 +157,17 @@ fun RemoveMemberDialog(
 
 @OptIn(ExperimentalMaterial3Api::class) //TODO: Maybe choose another version
 @Composable
-fun MembersScreen(vm: MemberViewModel = viewModel(), onAddMembers: () -> Unit){
+fun MembersScreen(vm: MemberViewModel = viewModel(), onAddMembers: () -> Unit, onBackPressed: () -> Unit){
     Scaffold (
         topBar = {
             TopAppBar(
                 title = { Text("Members") },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = Color.Blue,
+                    titleContentColor = Color.White
+                ),
                 navigationIcon = {
-                    IconButton(onClick = { /*TODO */ }) {
+                    IconButton(onClick = { onBackPressed() }) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = "Go back"
@@ -202,7 +207,7 @@ fun MemberScreenPreview() {
     vm.addPerson("Steve")
 
     GimmeDaMoneyTheme {
-        MembersScreen(onAddMembers = {})
+        MembersScreen(onAddMembers = {}, onBackPressed = {})
     }
 
 }
