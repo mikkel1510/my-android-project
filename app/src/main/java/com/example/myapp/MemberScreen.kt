@@ -31,29 +31,28 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.myapp.ui.theme.MyAppTheme
+import androidx.navigation.NavController
+import java.util.UUID
 
 @Composable
-fun PersonList(members: List<MemberViewModel.Member>) {
+fun PersonList(members: List<MemberViewModel.Member>, onRemove: (String) -> Unit) {
     Column {
         for(member in members){
-            PersonBar(member)
+            PersonBar(member, onRemove)
         }
     }
 }
 
 @Composable
-fun PersonBar(member: MemberViewModel.Member){
-    val vm: MemberViewModel = viewModel()
+fun PersonBar(member: MemberViewModel.Member, onRemove: (String) -> Unit){
     val dialogOpen = remember { mutableStateOf(false) }
 
     RemoveMemberDialog(      //TODO: Should be on the screen instead of every individual person
         active = dialogOpen.value,
         onDismissRequest = { dialogOpen.value = false },
-        onConfirmation = { vm.removePerson(member.id) },
+        onConfirmation = { onRemove(member.id) },
         memberName = member.name
     )
     Row(modifier = Modifier
@@ -121,7 +120,7 @@ fun RemoveMemberDialog(
 
 @OptIn(ExperimentalMaterial3Api::class) //TODO: Maybe choose another version
 @Composable
-fun MembersScreen(onAddMembers: () -> Unit, onBackPressed: () -> Unit, vm: MemberViewModel = viewModel()){
+fun MembersScreen(nav: NavController, vm: MemberViewModel = viewModel()){
     Scaffold (
         topBar = {
             TopAppBar(
@@ -131,7 +130,7 @@ fun MembersScreen(onAddMembers: () -> Unit, onBackPressed: () -> Unit, vm: Membe
                     titleContentColor = Color.White
                 ),
                 navigationIcon = {
-                    IconButton(onClick = { onBackPressed() }) {
+                    IconButton(onClick = { nav.popBackStack() }) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = "Go back"
@@ -139,7 +138,7 @@ fun MembersScreen(onAddMembers: () -> Unit, onBackPressed: () -> Unit, vm: Membe
                     }
                 },
                 actions = {
-                    IconButton(onClick = { onAddMembers() }) {
+                    IconButton(onClick = { nav.navigate("addMember") }) {
                         Icon(
                             imageVector = Icons.Default.Add,
                             contentDescription = "Add new member",
@@ -156,11 +155,12 @@ fun MembersScreen(onAddMembers: () -> Unit, onBackPressed: () -> Unit, vm: Membe
             verticalArrangement = Arrangement.SpaceBetween,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            PersonList(vm.members)
+            PersonList(vm.members, { id -> vm.removePerson(id) } )
         }
     }
 }
 
+/*
 @Preview(showBackground = true)
 @Composable
 fun MemberScreenPreview() {
@@ -177,3 +177,4 @@ fun MemberScreenPreview() {
     }
 
 }
+ */
