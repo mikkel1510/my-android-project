@@ -24,8 +24,10 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -34,12 +36,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavController
 import com.example.myapp.ui.theme.MyAppTheme
-import java.util.UUID
 
 @Composable
-fun PersonList(members: List<MemberViewModel.Member>, onRemove: (String) -> Unit) {
+fun PersonList(members: List<MemberViewModel.Member>, onRemove: (MemberViewModel.Member) -> Unit) {
     Column {
         for(member in members){
             PersonBar(member, onRemove)
@@ -48,15 +48,8 @@ fun PersonList(members: List<MemberViewModel.Member>, onRemove: (String) -> Unit
 }
 
 @Composable
-fun PersonBar(member: MemberViewModel.Member, onRemove: (String) -> Unit){
-    val dialogOpen = remember { mutableStateOf(false) }
+fun PersonBar(member: MemberViewModel.Member, onRemove: (MemberViewModel.Member) -> Unit){
 
-    RemoveMemberDialog(      //TODO: Should be on the screen instead of every individual person
-        active = dialogOpen.value,
-        onDismissRequest = { dialogOpen.value = false },
-        onConfirmation = { onRemove(member.id) },
-        memberName = member.name
-    )
     Row(modifier = Modifier
         .padding(10.dp)
         .border(width = 2.dp, color = Color.LightGray, shape = RoundedCornerShape(8.dp))
@@ -74,7 +67,7 @@ fun PersonBar(member: MemberViewModel.Member, onRemove: (String) -> Unit){
             member.name
         )
         Button(
-            onClick = { dialogOpen.value = true }, colors = ButtonDefaults.buttonColors(containerColor = Color.Red),
+            onClick = { onRemove(member) }, colors = ButtonDefaults.buttonColors(containerColor = Color.Red),
             modifier = Modifier
                 .width(100.dp)){
             Text("Remove")
@@ -157,7 +150,19 @@ fun MembersScreen(onAddMember: () -> Unit, onBackPress: () -> Unit, vm: MemberVi
             verticalArrangement = Arrangement.SpaceBetween,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            PersonList(vm.members, { id -> vm.removePerson(id) } )
+
+            var selectedMember by remember { mutableStateOf<MemberViewModel.Member?>(null) }
+
+            selectedMember?.let {
+                RemoveMemberDialog(
+                    true,
+                    { selectedMember = null },
+                    { vm.removePerson(it.id); selectedMember = null },
+                    it.name
+                )
+            }
+
+            PersonList(vm.members, { member -> selectedMember = member } )
         }
     }
 }
