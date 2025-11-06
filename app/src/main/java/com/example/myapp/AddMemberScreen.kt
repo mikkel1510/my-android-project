@@ -28,13 +28,14 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AddMemberScreen(nav: NavController, vm: MemberViewModel = viewModel()) {
+fun AddMemberScreen(onBackPress: () -> Unit, vm: MemberViewModel = viewModel()) {
     Scaffold(
         topBar = {
             TopAppBar(
@@ -44,7 +45,7 @@ fun AddMemberScreen(nav: NavController, vm: MemberViewModel = viewModel()) {
                     titleContentColor = Color.White
                 ),
                 navigationIcon = {
-                    IconButton(onClick = { nav.popBackStack() }) {
+                    IconButton(onClick = { onBackPress() }) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = "Go back"
@@ -96,11 +97,8 @@ fun AddMemberBar(onAddMember: (String) -> Unit, modifier: Modifier = Modifier){
     }
 }
 
-/*
 @Preview(showBackground = true)
 @Composable
 fun AddMemberPreview() {
-    AddMemberScreen(onBackPressed = {})
+    AddMemberScreen({})
 }
-
- */

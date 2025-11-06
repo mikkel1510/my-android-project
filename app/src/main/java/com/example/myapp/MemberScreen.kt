@@ -31,9 +31,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.example.myapp.ui.theme.MyAppTheme
 import java.util.UUID
 
 @Composable
@@ -120,7 +122,7 @@ fun RemoveMemberDialog(
 
 @OptIn(ExperimentalMaterial3Api::class) //TODO: Maybe choose another version
 @Composable
-fun MembersScreen(nav: NavController, vm: MemberViewModel = viewModel()){
+fun MembersScreen(onAddMember: () -> Unit, onBackPress: () -> Unit, vm: MemberViewModel = viewModel()){
     Scaffold (
         topBar = {
             TopAppBar(
@@ -130,7 +132,7 @@ fun MembersScreen(nav: NavController, vm: MemberViewModel = viewModel()){
                     titleContentColor = Color.White
                 ),
                 navigationIcon = {
-                    IconButton(onClick = { nav.popBackStack() }) {
+                    IconButton(onClick = { onBackPress() }) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = "Go back"
@@ -138,7 +140,7 @@ fun MembersScreen(nav: NavController, vm: MemberViewModel = viewModel()){
                     }
                 },
                 actions = {
-                    IconButton(onClick = { nav.navigate("addMember") }) {
+                    IconButton(onClick = { onAddMember() }) {
                         Icon(
                             imageVector = Icons.Default.Add,
                             contentDescription = "Add new member",
@@ -160,7 +162,6 @@ fun MembersScreen(nav: NavController, vm: MemberViewModel = viewModel()){
     }
 }
 
-/*
 @Preview(showBackground = true)
 @Composable
 fun MemberScreenPreview() {
@@ -170,11 +171,10 @@ fun MemberScreenPreview() {
     vm.addPerson("Steve")
 
     MyAppTheme {
-        MembersScreen(onAddMembers = {}, onBackPressed = {})
+        MembersScreen({}, {})
 
         //Set 'active' to true for preview
         RemoveMemberDialog(false, {}, {}, "Bob")
     }
 
 }
- */

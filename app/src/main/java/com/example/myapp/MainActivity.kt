@@ -23,7 +23,7 @@ class MainActivity : ComponentActivity() {
             ) {
                 composable("home") {
                     HomeScreen(
-                        nav = nav,
+                        onMembersClicked = { nav.navigate("members_flow") },
                     )
                 }
                 //Nav graph for "members" feature
@@ -34,7 +34,8 @@ class MainActivity : ComponentActivity() {
                         }
                         val vm: MemberViewModel = viewModel(parentEntry)
                         MembersScreen(
-                            nav = nav,
+                            { nav.navigate("addMember") },
+                            { nav.popBackStack() },
                             vm = vm
                         )
                     }
@@ -45,7 +46,7 @@ class MainActivity : ComponentActivity() {
                         }
                         val vm: MemberViewModel = viewModel(parentEntry)
                         AddMemberScreen(
-                            nav = nav,
+                            { nav.popBackStack() },
                             vm = vm
                         )
                     }

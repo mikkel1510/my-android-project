@@ -14,11 +14,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavController
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HomeScreen(nav: NavController){
+fun HomeScreen(onMembersClicked: () -> Unit){
     Scaffold { innerPadding ->
         CenterAlignedTopAppBar(
             title = {Text("MyApp")},
@@ -35,7 +36,7 @@ fun HomeScreen(nav: NavController){
             verticalArrangement = Arrangement.Center
         ) {
             Button(
-                onClick = { nav.navigate("members_flow")  }
+                onClick = { onMembersClicked() }
             ) {
                 Text("Group members")
             }
@@ -43,9 +44,9 @@ fun HomeScreen(nav: NavController){
 
     }
 }
-/*
+
 @Preview(showBackground = true)
 @Composable
 fun HomeScreenPreview(){
     HomeScreen({})
-}*/
+}
