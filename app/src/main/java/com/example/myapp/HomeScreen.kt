@@ -38,7 +38,7 @@ fun HomeScreen(onMembersClicked: () -> Unit){
             Button(
                 onClick = { onMembersClicked() }
             ) {
-                Text("Group members")
+                Text("Group")
             }
         }
 

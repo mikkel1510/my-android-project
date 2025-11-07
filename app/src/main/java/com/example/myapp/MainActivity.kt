@@ -27,7 +27,15 @@ class MainActivity : ComponentActivity() {
                     )
                 }
                 //Nav graph for "members" feature
-                navigation(startDestination = "members", route = "members_flow"){
+                navigation(startDestination = "groupChat", route = "members_flow"){
+
+                    composable("groupChat") {
+                        GroupChatScreen(
+                            { nav.navigate("members") },
+                            { nav.popBackStack() }
+                        )
+                    }
+
                     composable("members") { backStackEntry ->
                         val parentEntry = remember(backStackEntry) {
                             nav.getBackStackEntry("members_flow")
