@@ -128,7 +128,8 @@ fun MembersScreen(onAddMember: () -> Unit, onBackPress: () -> Unit, vm: MemberVi
                     IconButton(onClick = { onBackPress() }) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Go back"
+                            contentDescription = "Go back",
+                            tint = Color.White
                         )
                     }
                 },
@@ -137,6 +138,7 @@ fun MembersScreen(onAddMember: () -> Unit, onBackPress: () -> Unit, vm: MemberVi
                         Icon(
                             imageVector = Icons.Default.Add,
                             contentDescription = "Add new member",
+                            tint = Color.White
                         )
                     }
                 }
