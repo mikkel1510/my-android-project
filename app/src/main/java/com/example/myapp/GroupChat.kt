@@ -1,7 +1,6 @@
 package com.example.myapp
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -14,13 +13,10 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material3.Button
@@ -30,7 +26,6 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextFieldColors
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
@@ -42,17 +37,14 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Outline
-import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun GroupChatScreen(onInfoPress: () -> Unit, onBackPress: () -> Unit){
+fun GroupChatScreen(onInfoPress: () -> Unit, onBackPress: () -> Unit, vm: ChatViewModel = viewModel()){
     Scaffold(
         topBar = {
             TopAppBar(
@@ -89,15 +81,15 @@ fun GroupChatScreen(onInfoPress: () -> Unit, onBackPress: () -> Unit){
             verticalArrangement = Arrangement.spacedBy(10.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            ChatBox(modifier = Modifier.weight(1f))
-            BottomToolBar()
+            ChatBox(modifier = Modifier.weight(1f), vm.messages)
+            BottomToolBar({ text -> vm.addMessage("1", text) })
         }
 
     }
 }
 
 @Composable
-fun ChatBox(modifier: Modifier){
+fun ChatBox(modifier: Modifier, messages: List<ChatViewModel.Message>){
     LazyColumn(
         modifier
             .fillMaxSize()
@@ -105,20 +97,26 @@ fun ChatBox(modifier: Modifier){
             .background(Color.LightGray)
             .padding(15.dp)
     ) {
-        items(20){
+
+        items(
+            items = messages,
+            key = { it.id }
+        ) { message ->
+            ChatRow(true) {
+                ChatMessage(message)
+            }
+        }
+
+        items(1){
             ChatRow(true ){
                 ChatBubble("hello")
-            }
-            ChatRow(false) {
-                ChatMessage("Sup")
             }
             ChatRow(false){
                 ChatBubble("yamudda")
             }
-            ChatRow(true) {
-                ChatMessage("hello")
-            }
+
         }
+
     }
 }
 
@@ -127,14 +125,14 @@ fun ChatRow(outgoing: Boolean, payload: @Composable () -> Unit){
     val modifier = Modifier
         .padding(bottom = 5.dp)
         .fillMaxSize()
-    val alignment = if (outgoing) Alignment.Start else Alignment.End
+    val alignment = if (outgoing) Alignment.End else Alignment.Start
 
     Column(
         modifier,
         horizontalAlignment = alignment
     ) {
         Row {
-            Text(if (outgoing) "from you" else "from me")
+            Text(if (outgoing) "You" else "Them")
         }
         payload()
     }
@@ -162,7 +160,7 @@ fun ChatBubble(message: String){
 }
 
 @Composable
-fun ChatMessage(message: String){
+fun ChatMessage(message: ChatViewModel.Message){
     Row(Modifier
         .clip(
             RoundedCornerShape(16.dp)
@@ -171,13 +169,13 @@ fun ChatMessage(message: String){
         .widthIn(min = 150.dp)
         .padding(10.dp)
     ) {
-        Text(message)
+        Text(message.text)
     }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun BottomToolBar(){
+fun BottomToolBar(onEnterPress: (String) -> Unit){
     Column(Modifier
         .fillMaxWidth()
         .height(130.dp)
@@ -200,14 +198,12 @@ fun BottomToolBar(){
                 colors = TextFieldDefaults.colors(focusedContainerColor = Color.White),
                 modifier = Modifier.weight(1f)
             )
-            Button(onClick = {}) {
-                IconButton(onClick = {}, modifier = Modifier.size(30.dp)) {
-                    Icon(
-                        imageVector = Icons.Default.KeyboardArrowUp,
-                        contentDescription = "Add new member",
-                        tint = Color.White
-                    )
-                }
+            IconButton(onClick = { onEnterPress(messageText); messageText = "" }, modifier = Modifier.size(30.dp)) {
+                Icon(
+                    imageVector = Icons.Default.KeyboardArrowUp,
+                    contentDescription = "Add new member",
+                    tint = Color.White
+                )
             }
         }
         Row(Modifier
