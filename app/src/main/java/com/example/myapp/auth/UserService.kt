@@ -10,6 +10,6 @@ interface UserService {
         val email: String
     )
 
-    @GET("mikkel1510/my-android-project/refs/heads/main/users.json"
+    @GET("mikkel1510/my-android-project/refs/heads/main/users.json")
     suspend fun getUsers(): List<ApiResponse>
 }
