@@ -1,4 +1,4 @@
-package com.example.myapp
+package com.example.myapp.chat
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize

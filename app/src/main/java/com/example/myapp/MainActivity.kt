@@ -10,6 +10,12 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
+import com.example.myapp.chat.ChatViewModel
+import com.example.myapp.chat.CreateRequestScreen
+import com.example.myapp.chat.GroupChatScreen
+import com.example.myapp.members.AddMemberScreen
+import com.example.myapp.members.MemberViewModel
+import com.example.myapp.members.MembersScreen
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -74,7 +80,7 @@ class MainActivity : ComponentActivity() {
                         val vm: MemberViewModel = viewModel(parentEntry)
                         AddMemberScreen(
                             { nav.popBackStack() },
-                            vm = vm
+                            memberVM = vm
                         )
                     }
                 }

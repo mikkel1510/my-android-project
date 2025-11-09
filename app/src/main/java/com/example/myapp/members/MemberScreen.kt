@@ -1,4 +1,4 @@
-package com.example.myapp
+package com.example.myapp.members
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
@@ -36,19 +36,21 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.myapp.R
+import com.example.myapp.auth.User
 import com.example.myapp.ui.theme.MyAppTheme
 
 @Composable
-fun PersonList(members: List<MemberViewModel.Member>, onRemove: (MemberViewModel.Member) -> Unit) {
+fun MemberList(users: List<User>, onRemove: (User) -> Unit) {
     Column {
-        for(member in members){
-            PersonBar(member, onRemove)
+        for(user in users){
+            MemberBar(user, onRemove)
         }
     }
 }
 
 @Composable
-fun PersonBar(member: MemberViewModel.Member, onRemove: (MemberViewModel.Member) -> Unit){
+fun MemberBar(user: User, onRemove: (User) -> Unit){
 
     Row(modifier = Modifier
         .padding(10.dp)
@@ -64,10 +66,10 @@ fun PersonBar(member: MemberViewModel.Member, onRemove: (MemberViewModel.Member)
             contentDescription = "User icon"
         )
         Text(
-            member.name
+            user.name
         )
         Button(
-            onClick = { onRemove(member) }, colors = ButtonDefaults.buttonColors(containerColor = Color.Red),
+            onClick = { onRemove(user) }, colors = ButtonDefaults.buttonColors(containerColor = Color.Red),
             modifier = Modifier
                 .width(100.dp)){
             Text("Remove")
@@ -101,7 +103,7 @@ fun RemoveMemberDialog(
             onDismissRequest()
         },
         confirmButton = {
-            Button(onClick = { onConfirmation() }) {
+            Button(onClick = { onConfirmation(); onDismissRequest() }) {
                 Text("Yes")
             }
         },
@@ -113,7 +115,7 @@ fun RemoveMemberDialog(
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class) //TODO: Maybe choose another version
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MembersScreen(onAddMember: () -> Unit, onBackPress: () -> Unit, vm: MemberViewModel = viewModel()){
     Scaffold (
@@ -153,18 +155,18 @@ fun MembersScreen(onAddMember: () -> Unit, onBackPress: () -> Unit, vm: MemberVi
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
 
-            var selectedMember by remember { mutableStateOf<MemberViewModel.Member?>(null) }
+            var selectedMember by remember { mutableStateOf<User?>(null) }
 
-            selectedMember?.let {
+            selectedMember?.let { member ->
                 RemoveMemberDialog(
                     true,
                     { selectedMember = null },
-                    { vm.removePerson(it.id); selectedMember = null },
-                    it.name
+                    { vm.removeMember(member) },
+                    member.name
                 )
             }
 
-            PersonList(vm.members, { member -> selectedMember = member } )
+            MemberList(vm.members, { member -> selectedMember = member } )
         }
     }
 }
@@ -173,9 +175,10 @@ fun MembersScreen(onAddMember: () -> Unit, onBackPress: () -> Unit, vm: MemberVi
 @Composable
 fun MemberScreenPreview() {
     val vm: MemberViewModel = viewModel()
-    vm.addPerson("Bob")
-    vm.addPerson("Pete")
-    vm.addPerson("Steve")
+    vm.addMember(User(1, "Bob", "bob@email.com"))
+    vm.addMember(User(2, "Joe", "joe@email.com"))
+    vm.addMember(User(3, "Steve", "steve@email.com"))
+
 
     MyAppTheme {
         MembersScreen({}, {})
