@@ -29,10 +29,29 @@ class MainActivity : ComponentActivity() {
                 //Nav graph for "members" feature
                 navigation(startDestination = "groupChat", route = "members_flow"){
 
-                    composable("groupChat") {
+                    composable("groupChat") { backStackEntry ->
+                        val parentEntry = remember(backStackEntry){
+                            nav.getBackStackEntry("members_flow")
+                        }
+                        val vm: ChatViewModel = viewModel(parentEntry)
                         GroupChatScreen(
                             { nav.navigate("members") },
-                            { nav.popBackStack() }
+                            { nav.popBackStack() },
+                            onCreateRequest = { nav.navigate("createRequest") },
+                            vm = vm
+                        )
+                    }
+
+                    composable("createRequest") { backStackEntry ->
+                        val parentEntry = remember(backStackEntry){
+                            nav.getBackStackEntry("members_flow")
+                        }
+
+                        val vm: ChatViewModel = viewModel(parentEntry)
+
+                        CreateRequestScreen(
+                            { nav.popBackStack() },
+                            vm = vm
                         )
                     }
 

@@ -44,7 +44,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun GroupChatScreen(onInfoPress: () -> Unit, onBackPress: () -> Unit, vm: ChatViewModel = viewModel()){
+fun GroupChatScreen(onInfoPress: () -> Unit, onBackPress: () -> Unit, onCreateRequest: () -> Unit, vm: ChatViewModel = viewModel()){
     Scaffold(
         topBar = {
             TopAppBar(
@@ -82,7 +82,7 @@ fun GroupChatScreen(onInfoPress: () -> Unit, onBackPress: () -> Unit, vm: ChatVi
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             ChatBox(modifier = Modifier.weight(1f), vm.messages)
-            BottomToolBar({ text -> vm.addMessage("1", text) })
+            BottomToolBar({ text -> vm.addTextMessage("1", text) }, onCreateRequest) //TODO: SenderID should use auth
         }
 
     }
@@ -97,26 +97,18 @@ fun ChatBox(modifier: Modifier, messages: List<ChatViewModel.Message>){
             .background(Color.LightGray)
             .padding(15.dp)
     ) {
-
         items(
             items = messages,
             key = { it.id }
         ) { message ->
-            ChatRow(true) {
-                ChatMessage(message)
+            ChatRow(if (message.senderID == "1") true else false) { //TODO: SenderID should use auth
+                if (message is ChatViewModel.TextMessage){
+                    TextMessage(message)
+                } else if (message is ChatViewModel.RequestMessage){
+                    RequestMessage(message)
+                }
             }
         }
-
-        items(1){
-            ChatRow(true ){
-                ChatBubble("hello")
-            }
-            ChatRow(false){
-                ChatBubble("yamudda")
-            }
-
-        }
-
     }
 }
 
@@ -139,7 +131,7 @@ fun ChatRow(outgoing: Boolean, payload: @Composable () -> Unit){
 }
 
 @Composable
-fun ChatBubble(message: String){
+fun RequestMessage(message: ChatViewModel.RequestMessage){
     Row(Modifier
         .width(200.dp)
         .height(120.dp)
@@ -154,13 +146,16 @@ fun ChatBubble(message: String){
             .background(Color.Blue),
             contentAlignment = Alignment.Center
         ){
-            Text(message, color = Color.White)
+            Column(){
+                Text(message.text, color = Color.White)
+                Text(text = "$${message.amount}", color = Color.White)
+            }
         }
     }
 }
 
 @Composable
-fun ChatMessage(message: ChatViewModel.Message){
+fun TextMessage(message: ChatViewModel.Message){
     Row(Modifier
         .clip(
             RoundedCornerShape(16.dp)
@@ -175,7 +170,7 @@ fun ChatMessage(message: ChatViewModel.Message){
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun BottomToolBar(onEnterPress: (String) -> Unit){
+fun BottomToolBar(onEnterPress: (String) -> Unit, onCreateRequest: () -> Unit){
     Column(Modifier
         .fillMaxWidth()
         .height(130.dp)
@@ -210,7 +205,7 @@ fun BottomToolBar(onEnterPress: (String) -> Unit){
             .fillMaxSize(),
             horizontalArrangement = Arrangement.Center
         ){
-            Button(onClick = {}, Modifier.width(150.dp),){
+            Button(onClick = { onCreateRequest() }, Modifier.width(150.dp),){
                 Text("Create request")
             }
         }
@@ -220,5 +215,5 @@ fun BottomToolBar(onEnterPress: (String) -> Unit){
 @Preview(showBackground = true)
 @Composable
 fun GroupChatScreenPreview(){
-    GroupChatScreen({}, {})
+    GroupChatScreen({}, {}, {})
 }
